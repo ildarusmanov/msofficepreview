@@ -12,7 +12,7 @@ func (pg *PreviewGenerator) GetAccessToken() string {
   return pg.accessToken
 }
 
-func (pg *PreviewGenerator) GetPreviewLink() string {
+func (pg *PreviewGenerator) GetPreviewLink(link string) string {
   return "http://fake.link.test"
 }
 

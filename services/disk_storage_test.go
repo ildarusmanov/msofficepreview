@@ -16,7 +16,7 @@ var testFileId = "test_file.txt"
 func getDiskRootPath() string {
   _, filename, _, _ := runtime.Caller(0)
   
-  return path.Join(path.Dir(filename), "test/tmp"))
+  return path.Join(path.Dir(filename), "test/tmp")
 }
 
 func TestCreateDiskStorage(t *testing.T) {

@@ -3,7 +3,6 @@ package services
 import (
   "testing"
   "github.com/stretchr/testify/assert"
-  "os"
   "runtime"
   "path"
 )
@@ -37,10 +36,10 @@ func TestGetFileInfo(t *testing.T) {
     assert.Equal(fileInfo.GetOwnerId(), testFileOwnerId)
 }
 
-func TestGetFileInfo(t *testing.T) {
+func TestGetContents(t *testing.T) {
     storage := CreateDiskStorage(getDiskRootPath())
 
     fileContents := storage.GetContents(testFileId)
 
-    assert.NotNil(fileContents)
+    assert.NotNil(t, fileContents)
 }

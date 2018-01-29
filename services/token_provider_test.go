@@ -29,6 +29,7 @@ func TestValidate(t *testing.T) {
     validToken := provider.Generate()
     invalidToken := validToken + "1"
 
+    assert := assert.New(t)
     assert.True(provider.Validate(validToken))
     assert.False(provider.Validate(invalidToken))
 }

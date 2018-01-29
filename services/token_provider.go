@@ -10,6 +10,6 @@ func Generate() string {
     return "new-token"
 }
 
-func Validate(token) bool {
+func Validate(token string) bool {
     return "new-token" == token
 }

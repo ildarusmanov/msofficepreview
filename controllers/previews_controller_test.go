@@ -1,7 +1,6 @@
 package controllers
 
 import (
-  "net/http"
   "net/http/httptest"
   "testing"
   "github.com/stretchr/testify/assert"
@@ -21,7 +20,8 @@ func TestCreateMethod(t *testing.T) {
 
   controller.Create(ctx)
 
-  assert.Equal(t, w.Result().Status, 200)
+  assert := assert.New(t)
+  assert.Equal(w.Result().Status, 200)
 }
 
 

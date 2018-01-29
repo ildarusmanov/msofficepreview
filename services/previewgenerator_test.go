@@ -5,21 +5,20 @@ import (
   "github.com/stretchr/testify/assert"
 )
 
-const accessToken = "example-token"
-const exampleUrl = "url"
+const fileId = "url"
 
 func TestCreatePreviewGenerator(t *testing.T) {
-  generator := CreatePreviewGenerator(accessToken)
+  generator := CreatePreviewGenerator(tokenProvider, storage)
 
   assert.NotNil(t, generator)
-  assert.Equal(t,  generator.GetAccessToken(), accessToken)
 }
 
 func TestGetPreviewLink(t *testing.T) {
-  generator := CreatePreviewGenerator(accessToken)
+  accessToken := tokenProvider.Generate()
 
-  previewLink := generator.GetPreviewLink(exampleUrl)
+  generator := CreatePreviewGenerator(tokenProvider, storage)
+
+  previewLink := generator.GetPreviewLink(accessToken, fileId)
 
   assert.NotNil(t, previewLink)
 }
-

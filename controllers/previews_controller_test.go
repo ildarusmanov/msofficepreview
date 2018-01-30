@@ -30,6 +30,11 @@ func TestCreateMethod(t *testing.T) {
   w := httptest.NewRecorder()
   ctx, eng := gin.CreateTestContext(w)
 
+  ctx.Params = []gin.Params{
+    gin.Param{key: "fileId", value: fileId},
+    gin.Param{key: "accessToken", value: accessToken},
+  }
+
   controller.Create(ctx)
 
   assert := assert.New(t)

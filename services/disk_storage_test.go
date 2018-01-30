@@ -25,6 +25,13 @@ func TestCreateDiskStorage(t *testing.T) {
 }
 
 func TestGetFileInfo(t *testing.T) {
+    var (
+        testFileBaseName = "file"
+        testFileSize = int64(12)
+        testFileVersion = "123"
+        testFileOwnerId = "123"
+    )
+
     storage := CreateDiskStorage(getDiskRootPath())
 
     fileInfo, err := storage.GetFileInfo(testFileId)

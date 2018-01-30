@@ -4,23 +4,12 @@ import (
   "net/http/httptest"
   "testing"
   "github.com/stretchr/testify/assert"
-  "github.com/stretchr/testify/mock"
+  "github.com/ildarusmanov/msofficepreview/test/mocks"
   "github.com/gin-gonic/gin"
 )
 
-// PrviewsGeneratorMock
-type previewsGeneratorMock struct {
-  mock.Mock
-}
-
-// mock get preview link method
-func (m *previewsGeneratorMock) GetPreviewLink(accessToken, fileId string) (string, error) {
-  args := m.Called(accessToken, fileId)
-  return args.Get(0).(string), args.Error(1)
-}
-
 func TestCreatePreviewsController(t *testing.T) {
-  generator := new(previewsGeneratorMock)
+  generator := mocks.CreatePreviewGeneratorMock()
 
   controller := CreatePreviewsController(generator)
 
@@ -34,7 +23,7 @@ func TestCreateMethod(t *testing.T) {
     previewUrl = "previewUrl"
   )
 
-  generator := new(previewsGeneratorMock)
+  generator := mocks.CreatePreviewGeneratorMock()
   generator.On("GetPreviewLink", accessToken, fileId).Return(previewUrl, nil)
 
   controller := CreatePreviewsController(generator)

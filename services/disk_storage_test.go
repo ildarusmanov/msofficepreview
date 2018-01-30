@@ -27,9 +27,10 @@ func TestCreateDiskStorage(t *testing.T) {
 func TestGetFileInfo(t *testing.T) {
     storage := CreateDiskStorage(getDiskRootPath())
 
-    fileInfo := storage.GetFileInfo(testFileId)
+    fileInfo, err := storage.GetFileInfo(testFileId)
     
     assert := assert.New(t)
+    assert.Nil(err)
     assert.Equal(fileInfo.GetFileName(), testFileBaseName)
     assert.Equal(fileInfo.GetSize(), testFileSize)
     assert.Equal(fileInfo.GetVersion(), testFileVersion)

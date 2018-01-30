@@ -4,18 +4,24 @@ import (
   "net/http/httptest"
   "testing"
   "github.com/stretchr/testify/assert"
-  "github.com/stretchr/testify/mock"
+  "github.com/ildarusmanov/msofficepreview/test/mocks"
   "github.com/gin-gonic/gin"
 )
 
 func TestCreateWopiController(t *testing.T) {
-  controller := CreateWopiController(wopiStorage, tokenProvider)
+  storage := mocks.CreateStorageMock()
+  provider := mocks.CreateTokenProviderMock()
+
+  controller := CreateWopiController(storage, provider)
 
   assert.NotNil(t, controller)
 }
 
 func TestCheckFileInfo(t *testing.T) {
-  controller := CreateWopiController(storage, tokenProvider)
+  storage := mocks.CreateStorageMock()
+  provider := mocks.CreateTokenProviderMock()
+
+  controller := CreateWopiController(storage, provider)
 
   w := httptest.NewRecorder()
   ctx, eng := gin.CreateTestContext(w)
@@ -27,7 +33,10 @@ func TestCheckFileInfo(t *testing.T) {
 }
 
 func TestGetFile(t *testing.T) {
-  controller := CreateWopiController(storage, tokenProvider)
+  storage := mocks.CreateStorageMock()
+  provider := mocks.CreateTokenProviderMock()
+
+  controller := CreateWopiController(storage, provider)
 
   w := httptest.NewRecorder()
   ctx, eng := gin.CreateTestContext(w)

@@ -40,7 +40,9 @@ func TestGetFileInfo(t *testing.T) {
 func TestGetContents(t *testing.T) {
     storage := CreateDiskStorage(getDiskRootPath())
 
-    fileContents := storage.GetContents(testFileId)
+    fileContents, err := storage.GetContents(testFileId)
 
-    assert.NotNil(t, fileContents)
+    assert := assert.New(t)
+    assert.Nil(err)
+    assert.NotNil(fileContents)
 }

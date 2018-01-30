@@ -12,7 +12,7 @@ func CreatePreviewGeneratorMock() *PreviewsGeneratorMock {
     return new(PreviewsGeneratorMock)
 }
 
-func (m *PreviewsGeneratorMock) GetPreviewLink(accessToken, fileId string) (string, error) {
-  args := m.Called(accessToken, fileId)
+func (m *PreviewsGeneratorMock) GetPreviewLink(fileId string) (string, error) {
+  args := m.Called(fileId)
   return args.Get(0).(string), args.Error(1)
 }

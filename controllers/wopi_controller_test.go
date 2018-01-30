@@ -2,6 +2,7 @@ package controllers
 
 import (
   "net/http/httptest"
+  "net/http"
   "testing"
   "github.com/stretchr/testify/assert"
   "github.com/ildarusmanov/msofficepreview/test/mocks"
@@ -42,7 +43,7 @@ func TestCheckFileInfo(t *testing.T) {
   controller := CreateWopiController(storage, provider)
 
   w := httptest.NewRecorder()
-  ctx, eng := gin.CreateTestContext(w)
+  ctx, _ := gin.CreateTestContext(w)
 
   ctx.Params = gin.Params{
     gin.Param{Key: "fileId", Value: fileId},
@@ -52,7 +53,7 @@ func TestCheckFileInfo(t *testing.T) {
   controller.CheckFileInfo(ctx)
 
   assert := assert.New(t)
-  assert.Equal(w.Result().Status, 200)
+  assert.Equal(w.Result().StatusCode, http.StatusOK)
 }
 
 func TestGetFile(t *testing.T) {
@@ -71,7 +72,7 @@ func TestGetFile(t *testing.T) {
   controller := CreateWopiController(storage, provider)
 
   w := httptest.NewRecorder()
-  ctx, eng := gin.CreateTestContext(w)
+  ctx, _ := gin.CreateTestContext(w)
 
   ctx.Params = gin.Params{
     gin.Param{Key: "fileId", Value: fileId},
@@ -81,5 +82,5 @@ func TestGetFile(t *testing.T) {
   controller.GetFile(ctx)
 
   assert := assert.New(t)
-  assert.Equal(w.Result().Status, 200)
+  assert.Equal(w.Result().StatusCode, http.StatusOK)
 }

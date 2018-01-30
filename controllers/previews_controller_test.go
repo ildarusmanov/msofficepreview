@@ -1,6 +1,7 @@
 package controllers
 
 import (
+  "net/http"
   "net/http/httptest"
   "testing"
   "github.com/stretchr/testify/assert"
@@ -18,26 +19,25 @@ func TestCreatePreviewsController(t *testing.T) {
 
 func TestCreateMethod(t *testing.T) {
   var (
-    accessToken = "accessToken"
     fileId = "fileId"
     previewUrl = "previewUrl"
   )
 
   generator := mocks.CreatePreviewGeneratorMock()
-  generator.On("GetPreviewLink", accessToken, fileId).Return(previewUrl, nil)
+  generator.On("GetPreviewLink", fileId).Return(previewUrl, nil)
 
   controller := CreatePreviewsController(generator)
   w := httptest.NewRecorder()
-  ctx, eng := gin.CreateTestContext(w)
+  ctx, _ := gin.CreateTestContext(w)
 
   ctx.Params = gin.Params{
-    gin.Param{Key: "fileUrl", Value: fileId},
+    gin.Param{Key: "fileId", Value: fileId},
   }
 
   controller.Create(ctx)
 
   assert := assert.New(t)
-  assert.Equal(w.Result().Status, 200)
+  assert.Equal(w.Result().StatusCode, http.StatusOK)
 }
 
 

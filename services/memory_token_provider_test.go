@@ -8,14 +8,14 @@ import (
 
 var tokenLifetime = int64(3600)
 
-func TestCreateTokenProvider(t *testing.T) {
-    provider := CreateTokenProvider(tokenLifetime)
+func TestCreateMemoryTokenProvider(t *testing.T) {
+    provider := CreateMemoryTokenProvider(tokenLifetime)
 
     assert.NotNil(t, provider)
 }
 
 func TestGenerate(t *testing.T) {
-    provider := CreateTokenProvider(tokenLifetime)
+    provider := CreateMemoryTokenProvider(tokenLifetime)
 
     newToken := provider.Generate()
 
@@ -28,7 +28,7 @@ func TestGenerate(t *testing.T) {
 }
 
 func TestValidate(t *testing.T) {
-    provider := CreateTokenProvider(tokenLifetime)
+    provider := CreateMemoryTokenProvider(tokenLifetime)
     validToken := provider.Generate()
     invalidToken := validToken + "1"
 
@@ -42,10 +42,9 @@ func TestCleanUp(t *testing.T) {
         minTokenLifetime = int64(3)
     )
 
-    provider := CreateTokenProvider(minTokenLifetime)
+    provider := CreateMemoryTokenProvider(minTokenLifetime)
     expiredToken := provider.Generate()
     time.Sleep(time.Duration(minTokenLifetime+1) * time.Second)
-    provider.CleanUp()
     newToken := provider.Generate()
 
     assert := assert.New(t)

@@ -5,6 +5,7 @@ import (
   "github.com/stretchr/testify/assert"
   "runtime"
   "path"
+  "os"
 )
 
 var testFileId = "test_file.txt"
@@ -15,7 +16,7 @@ var testFileId = "test_file.txt"
 func getDiskRootPath() string {
   _, filename, _, _ := runtime.Caller(0)
   
-  return path.Join(path.Dir(filename), "test/tmp")
+  return path.Join(path.Dir(filename), "../test/tmp")
 }
 
 func TestCreateDiskStorage(t *testing.T) {
@@ -26,22 +27,25 @@ func TestCreateDiskStorage(t *testing.T) {
 
 func TestGetFileInfo(t *testing.T) {
     var (
-        testFileBaseName = "file"
-        testFileSize = int64(12)
-        testFileVersion = "123"
-        testFileOwnerId = "123"
+        diskRootPath = getDiskRootPath()
+        testFilePath = path.Join(diskRootPath, testFileId)
+        testFileBaseName = path.Base(testFilePath)
+        assert = assert.New(t)
+        storage = CreateDiskStorage(diskRootPath)
     )
 
-    storage := CreateDiskStorage(getDiskRootPath())
+    f, err := os.Open(testFilePath)
+    assert.Nil(err)
+    defer f.Close()
+    fstat, err := f.Stat()
+    assert.Nil(err)
 
     fileInfo, err := storage.GetFileInfo(testFileId)
-    
-    assert := assert.New(t)
+
     assert.Nil(err)
     assert.Equal(fileInfo.GetFileName(), testFileBaseName)
-    assert.Equal(fileInfo.GetSize(), testFileSize)
-    assert.Equal(fileInfo.GetVersion(), testFileVersion)
-    assert.Equal(fileInfo.GetOwnerId(), testFileOwnerId)
+    assert.Equal(fileInfo.GetSize(), fstat.Size())
+    assert.Equal(fileInfo.GetVersion(), string(fstat.ModTime().Unix()))
 }
 
 func TestGetContents(t *testing.T) {

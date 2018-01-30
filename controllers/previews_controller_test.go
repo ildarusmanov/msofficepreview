@@ -31,8 +31,7 @@ func TestCreateMethod(t *testing.T) {
   ctx, eng := gin.CreateTestContext(w)
 
   ctx.Params = gin.Params{
-    gin.Param{Key: "fileId", Value: fileId},
-    gin.Param{Key: "accessToken", Value: accessToken},
+    gin.Param{Key: "fileUrl", Value: fileId},
   }
 
   controller.Create(ctx)

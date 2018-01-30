@@ -6,8 +6,6 @@ import (
   "github.com/ildarusmanov/msofficepreview/test/mocks"
 )
 
-const fileId = "url"
-
 func TestCreatePreviewGenerator(t *testing.T) {
   provider := mocks.CreateTokenProviderMock()
   storage := mocks.CreateStorageMock()
@@ -27,7 +25,7 @@ func TestGetPreviewLink(t *testing.T) {
   )
 
   provider := mocks.CreateTokenProviderMock()
-  provider.On("Validate", accessToken).Return(true)
+  provider.On("Generate").Return(accessToken)
 
   fileInfo := mocks.CreateFileInfoMock()
   fileInfo.On("GetFileName").Return(fileName)
@@ -36,11 +34,11 @@ func TestGetPreviewLink(t *testing.T) {
   fileInfo.On("GetOwnerId").Return(fileOwnerId)
 
   storage := mocks.CreateStorageMock()
-  storage.On("GetFileInfo").Return(fileInfo, nil)
+  storage.On("GetFileInfo", fileName).Return(fileInfo, nil)
 
   generator := CreatePreviewGenerator(provider, storage)
 
-  previewLink, err := generator.GetPreviewLink(accessToken, fileId)
+  previewLink, err := generator.GetPreviewLink(fileName)
 
   assert := assert.New(t)
   assert.Nil(err)

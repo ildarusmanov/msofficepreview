@@ -21,30 +21,39 @@ func CreateToken() *Token {
     }
 }
 
-type TokenProvider struct {
+type MemoryTokenProvider struct {
     sync.Mutex
     tokenLifetime int64
     tokens map[string]*Token
 }
 
-func CreateTokenProvider(tokenLifetime int64) *TokenProvider {
-    return &TokenProvider{
+func CreateMemoryTokenProvider(tokenLifetime int64) *MemoryTokenProvider {
+    p := &MemoryTokenProvider{
         tokenLifetime: tokenLifetime,
         tokens: make(map[string]*Token),
     }
+
+    go func(){
+        for {
+            time.Sleep(time.Duration(100) * time.Millisecond)
+            p.cleanUp()
+        }
+    }()
+
+    return p
 }
 
-func (p *TokenProvider) Generate() string {
+func (p *MemoryTokenProvider) Generate() string {
     newToken := p.createNewToken()
 
     return newToken.Value
 }
 
-func (p* TokenProvider) Validate(tokenValue string) bool {
+func (p* MemoryTokenProvider) Validate(tokenValue string) bool {
     return p.tokenExists(tokenValue)
 }
 
-func (p *TokenProvider) CleanUp() {
+func (p *MemoryTokenProvider) cleanUp() {
     for tokenValue, token := range p.tokens {
         if p.isExpired(token.Timestamp) {
             delete(p.tokens, tokenValue)
@@ -52,11 +61,11 @@ func (p *TokenProvider) CleanUp() {
     }
 }
 
-func (p *TokenProvider) isExpired(tokenTime int64) bool {
+func (p *MemoryTokenProvider) isExpired(tokenTime int64) bool {
     return time.Now().Unix() > tokenTime + p.tokenLifetime
 }
 
-func (p *TokenProvider) tokenExists(tokenValue string) bool {
+func (p *MemoryTokenProvider) tokenExists(tokenValue string) bool {
     p.Lock()
     _, ok := p.tokens[tokenValue]
     p.Unlock()
@@ -64,7 +73,7 @@ func (p *TokenProvider) tokenExists(tokenValue string) bool {
     return ok
 }
 
-func (p *TokenProvider) createNewToken() *Token {
+func (p *MemoryTokenProvider) createNewToken() *Token {
     newToken := CreateToken()
 
     p.Lock()

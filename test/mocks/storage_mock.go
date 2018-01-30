@@ -8,7 +8,7 @@ type StorageMock struct {
   mock.Mock
 }
 
-func CreateStorageMock() *storageMock {
+func CreateStorageMock() *StorageMock {
     return new(StorageMock)
 }
 

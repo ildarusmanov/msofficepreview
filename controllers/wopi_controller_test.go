@@ -45,11 +45,8 @@ func TestCheckFileInfo(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	ctx, _ := gin.CreateTestContext(w)
-
-	ctx.Params = gin.Params{
-		gin.Param{Key: "fileId", Value: fileId},
-		gin.Param{Key: "accessToken", Value: accessToken},
-	}
+	ctx.Request, _ = http.NewRequest("GET", "/?accessToken="+accessToken, nil)
+	ctx.Params = gin.Params{gin.Param{Key: "fileId", Value: fileId}}
 
 	controller.CheckFileInfo(ctx)
 
@@ -74,11 +71,8 @@ func TestGetFile(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	ctx, _ := gin.CreateTestContext(w)
-
-	ctx.Params = gin.Params{
-		gin.Param{Key: "fileId", Value: fileId},
-		gin.Param{Key: "accessToken", Value: accessToken},
-	}
+	ctx.Params = gin.Params{gin.Param{Key: "fileId", Value: fileId}}
+	ctx.Request, _ = http.NewRequest("GET", "/?accessToken="+accessToken, nil)
 
 	controller.GetFile(ctx)
 

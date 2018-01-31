@@ -24,7 +24,7 @@ func CreateRouter(serviceLocator interfaces.ServiceLocator) *gin.Engine {
 	}
 	apiv1 := r.Group("/api/v1")
 	{
-		apiv1.POST("/api/v1/:fileId", previewsController.Create)
+		apiv1.POST("/previews/:fileId", previewsController.Create)
 	}
 
 	return r

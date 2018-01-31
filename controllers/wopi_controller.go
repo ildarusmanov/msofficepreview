@@ -19,8 +19,8 @@ func CreateWopiController(storage interfaces.Storage, tokenProvider interfaces.T
 }
 
 func (c *WopiController) CheckFileInfo(ctx *gin.Context) {
-	accessToken := ctx.Params.ByName("accessToken")
-	fileId := ctx.Params.ByName("fileId")
+	accessToken := ctx.Query("accessToken")
+	fileId := ctx.Param("fileId")
 
 	if !c.tokenProvider.Validate(accessToken) {
 		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{})
@@ -44,8 +44,8 @@ func (c *WopiController) CheckFileInfo(ctx *gin.Context) {
 }
 
 func (c *WopiController) GetFile(ctx *gin.Context) {
-	accessToken := ctx.Params.ByName("accessToken")
-	fileId := ctx.Params.ByName("fileId")
+	accessToken := ctx.Query("accessToken")
+	fileId := ctx.Param("fileId")
 
 	if !c.tokenProvider.Validate(accessToken) {
 		ctx.AbortWithStatus(http.StatusUnauthorized)

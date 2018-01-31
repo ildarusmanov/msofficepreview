@@ -15,5 +15,13 @@ func CreatePreviewsController(generator interfaces.PreviewGenerator) *PreviewsCo
 }
 
 func (c *PreviewsController) Create(ctx *gin.Context) {
-    ctx.JSON(http.StatusOK, gin.H{})
+    fileId := ctx.Params.ByName("fileId")
+    previewLink, err := c.generator.GetPreviewLink(fileId)
+
+    if err != nil {
+        ctx.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": err})
+        return
+    }
+
+    ctx.JSON(http.StatusOK, gin.H{"Url": previewLink})
 }

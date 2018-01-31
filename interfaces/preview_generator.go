@@ -1,5 +1,5 @@
 package interfaces
 
 type PreviewGenerator interface {
-    GetPreviewLink(fileId string) (PreviewInfo, error)
+	GetPreviewLink(fileId string) (PreviewInfo, error)
 }

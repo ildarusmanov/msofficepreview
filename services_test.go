@@ -1,15 +1,15 @@
 package main
 
 import (
-  "testing"
-  "github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 // TODO add tests
 func TestBuildServiceLocator(t *testing.T) {
-    config := CreateNewConfig()
-    locator, err := BuildServiceLocator(config)
+	config := CreateNewConfig()
+	locator, err := BuildServiceLocator(config)
 
-    assert.Nil(t, err)
-    assert.NotNil(t, locator)
+	assert.Nil(t, err)
+	assert.NotNil(t, locator)
 }

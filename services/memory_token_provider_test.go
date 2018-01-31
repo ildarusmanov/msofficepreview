@@ -44,7 +44,7 @@ func TestCleanUp(t *testing.T) {
 
     provider := CreateMemoryTokenProvider(minTokenLifetime)
     expiredToken := provider.Generate()
-    time.Sleep(time.Duration(minTokenLifetime+1) * time.Second)
+    time.Sleep(time.Duration(minTokenLifetime+2) * time.Second)
     newToken := provider.Generate()
 
     assert := assert.New(t)

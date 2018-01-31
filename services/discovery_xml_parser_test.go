@@ -74,3 +74,15 @@ func TestParseDiscoveryXmlUrl(t *testing.T) {
     assert.NotNil(wopiDiscovery2)
     assert.Equal(wopiDiscovery1.GetXML(), wopiDiscovery2.GetXML())
 }
+
+func TestFindPreviewUrl(t *testing.T) {
+    fileData, _ := ioutil.ReadFile(exampleDiscoveryXmlPath)
+    wopiDiscovery, err1 := ParseDiscoveryXml(fileData)
+    urlsrc, err2 := wopiDiscovery.FindPreviewUrl("internal-https", "xlsx")
+
+    assert := assert.New(t)
+    assert.Nil(err1)
+    assert.NotNil(wopiDiscovery)
+    assert.Nil(err2)
+    assert.NotNil(urlsrc)
+}

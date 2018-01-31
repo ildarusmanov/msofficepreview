@@ -4,6 +4,7 @@ import (
     "encoding/xml"
     "io/ioutil"
     "net/http"
+    "errors"
 )
 
 type Action struct {
@@ -17,6 +18,16 @@ type App struct {
     Icon string `xml:"favIconUrl,attr"`
     License string `xml:"checkLicense,attr"`
     Actions []Action `xml:"action"`
+}
+
+func (a *App) getActionUrlsrc(name, ext string) (string, error) {
+    for _, action := range a.Actions {
+        if action.Ext == ext && action.Name == name {
+            return action.Urlsrc, nil
+        }
+    }
+
+    return "", errors.New("Action not found")
 }
 
 type NetZone struct {
@@ -51,6 +62,22 @@ func (d *WopiDiscovery) GetXML() []byte {
     }
 
     return xmlData
+}
+
+func (d *WopiDiscovery) FindPreviewUrl(zone, ext string) (string, error) {
+    for _, netzone := range d.NetZones {
+        if netzone.Name != zone {
+            continue;
+        }
+
+        for _, app := range netzone.Apps {
+            if urlsrc, err := app.getActionUrlsrc("embedview", ext); err == nil {
+                return urlsrc, nil
+            }
+        }
+    }
+
+    return "", errors.New("action not found")
 }
 
 func LoadDiscoveryXml(url string) ([]byte, error) {

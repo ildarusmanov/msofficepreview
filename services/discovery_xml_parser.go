@@ -2,6 +2,8 @@ package services
 
 import (
     "encoding/xml"
+    "io/ioutil"
+    "net/http"
 )
 
 type Action struct {
@@ -41,10 +43,53 @@ func CreateWopiDiscovery() *WopiDiscovery {
   return &WopiDiscovery{}
 }
 
+func (d *WopiDiscovery) GetXML() []byte {
+    xmlData, err := xml.Marshal(d)
+
+    if err != nil {
+        return []byte{}
+    }
+
+    return xmlData
+}
+
+func LoadDiscoveryXml(url string) ([]byte, error) {
+    res, err := http.Get(url)
+
+    if err != nil {
+        return nil, err
+    }
+
+    data, err := ioutil.ReadAll(res.Body)
+    res.Body.Close()
+
+    if err != nil {
+        return nil, err
+    }
+    
+    return data, nil
+}
+
 func ParseDiscoveryXml(data []byte) (*WopiDiscovery, error) {
     wopiDiscovery := CreateWopiDiscovery()
 
     if err := xml.Unmarshal(data, wopiDiscovery); err != nil {
+        return nil, err
+    }
+
+    return wopiDiscovery, nil
+}
+
+func ParseDiscoveryXmlUrl(url string) (*WopiDiscovery, error) {
+    xmlData, err := LoadDiscoveryXml(url)
+
+    if err != nil {
+        return nil, err
+    }
+
+    wopiDiscovery, err := ParseDiscoveryXml(xmlData)
+
+    if err != nil {
         return nil, err
     }
 

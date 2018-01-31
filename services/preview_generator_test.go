@@ -38,9 +38,11 @@ func TestGetPreviewLink(t *testing.T) {
 
   generator := CreatePreviewGenerator(provider, storage)
 
-  previewLink, err := generator.GetPreviewLink(fileName)
+  previewInfo, err := generator.GetPreviewLink(fileName)
 
   assert := assert.New(t)
   assert.Nil(err)
-  assert.NotNil(previewLink)
+  assert.NotNil(previewInfo.GetSrc())
+  assert.Equal(previewInfo.GetToken(), accessToken)
+  assert.NotNil(previewInfo.GetTokenTtl())
 }

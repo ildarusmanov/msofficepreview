@@ -20,11 +20,18 @@ func TestCreatePreviewsController(t *testing.T) {
 func TestCreateMethod(t *testing.T) {
   var (
     fileId = "fileId"
-    previewUrl = "previewUrl"
+    previewSrc = "previewUrl"
+    previewToken = "token"
+    previewTokenTtl = int64(10)
   )
 
+  previewInfo := mocks.CreatePreviewInfoMock()
+  previewInfo.On("GetSrc").Return(previewSrc)
+  previewInfo.On("GetToken").Return(previewToken)
+  previewInfo.On("GetTokenTtl").Return(previewTokenTtl)
+
   generator := mocks.CreatePreviewGeneratorMock()
-  generator.On("GetPreviewLink", fileId).Return(previewUrl, nil)
+  generator.On("GetPreviewLink", fileId).Return(previewInfo, nil)
 
   controller := CreatePreviewsController(generator)
   w := httptest.NewRecorder()

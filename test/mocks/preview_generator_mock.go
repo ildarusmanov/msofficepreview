@@ -1,6 +1,7 @@
 package mocks
 
 import (
+  "github.com/ildarusmanov/msofficepreview/interfaces"
   "github.com/stretchr/testify/mock"
 )
 
@@ -12,7 +13,7 @@ func CreatePreviewGeneratorMock() *PreviewsGeneratorMock {
     return new(PreviewsGeneratorMock)
 }
 
-func (m *PreviewsGeneratorMock) GetPreviewLink(fileId string) (string, error) {
+func (m *PreviewsGeneratorMock) GetPreviewLink(fileId string) (interfaces.PreviewInfo, error) {
   args := m.Called(fileId)
-  return args.Get(0).(string), args.Error(1)
+  return args.Get(0).(interfaces.PreviewInfo), args.Error(1)
 }

@@ -4,6 +4,7 @@ import (
   "net/http/httptest"
   "net/http"
   "testing"
+  "io/ioutil"
   "github.com/stretchr/testify/assert"
   "github.com/ildarusmanov/msofficepreview/test/mocks"
   "github.com/gin-gonic/gin"
@@ -81,6 +82,10 @@ func TestGetFile(t *testing.T) {
 
   controller.GetFile(ctx)
 
+  resp := w.Result()
+  body, _ := ioutil.ReadAll(resp.Body)
+
   assert := assert.New(t)
-  assert.Equal(w.Result().StatusCode, http.StatusOK)
+  assert.Equal(resp.StatusCode, http.StatusOK)
+  assert.Equal(body, fileContents)
 }

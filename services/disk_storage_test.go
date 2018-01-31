@@ -40,20 +40,26 @@ func TestGetFileInfo(t *testing.T) {
     fstat, err := f.Stat()
     assert.Nil(err)
 
-    fileInfo, err := storage.GetFileInfo(testFileId)
+    fileInfo1, err1 := storage.GetFileInfo(testFileId)
+    fileInfo2, err2 := storage.GetFileInfo(testFileId + "1")
 
-    assert.Nil(err)
-    assert.Equal(fileInfo.GetFileName(), testFileBaseName)
-    assert.Equal(fileInfo.GetSize(), fstat.Size())
-    assert.Equal(fileInfo.GetVersion(), string(fstat.ModTime().Unix()))
+    assert.Nil(err1)
+    assert.Equal(fileInfo1.GetFileName(), testFileBaseName)
+    assert.Equal(fileInfo1.GetSize(), fstat.Size())
+    assert.Equal(fileInfo1.GetVersion(), string(fstat.ModTime().Unix()))
+    assert.NotNil(err2)
+    assert.Nil(fileInfo2)
 }
 
 func TestGetContents(t *testing.T) {
     storage := CreateDiskStorage(getDiskRootPath())
 
-    fileContents, err := storage.GetContents(testFileId)
+    fileContent1, err1 := storage.GetContents(testFileId)
+    fileContent2, err2 := storage.GetContents(testFileId + "1")
 
     assert := assert.New(t)
-    assert.Nil(err)
-    assert.NotNil(fileContents)
+    assert.Nil(err1)
+    assert.NotNil(fileContent1)
+    assert.NotNil(err2)
+    assert.Nil(fileContent2)
 }

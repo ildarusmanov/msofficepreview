@@ -4,6 +4,7 @@ import (
     "os"
     "path"
     "io/ioutil"
+    "github.com/ildarusmanov/msofficepreview/interfaces"
 )
 
 type diskFileInfo struct {
@@ -46,7 +47,7 @@ func CreateDiskStorage(rootPath string) *DiskStorage {
     return &DiskStorage{rootPath: rootPath}
 }
 
-func (s *DiskStorage) GetFileInfo(fileId string) (*diskFileInfo, error) {
+func (s *DiskStorage) GetFileInfo(fileId string) (interfaces.FileInfo, error) {
     filePath := s.getFilePath(fileId)
     file, err := os.Open(filePath) 
 

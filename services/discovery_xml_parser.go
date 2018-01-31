@@ -71,7 +71,7 @@ func (d *WopiDiscovery) FindPreviewUrl(zone, ext string) (string, error) {
         }
 
         for _, app := range netzone.Apps {
-            if urlsrc, err := app.getActionUrlsrc("embedview", ext); err == nil {
+            if urlsrc, err := app.getActionUrlsrc("view", ext); err == nil {
                 return urlsrc, nil
             }
         }

@@ -1,6 +1,9 @@
 package services
 
 import (
+    "strings"
+    "path"
+    "net/url"
     "github.com/ildarusmanov/msofficepreview/interfaces"
 )
 
@@ -31,12 +34,21 @@ func (p *PreviewInfo) GetTokenTtl() int64 {
 }
 
 type PreviewGenerator struct {
+    serverHost string
+    wopiDiscovery interfaces.WopiDiscovery
     storage interfaces.Storage
     tokenProvider interfaces.TokenProvider
 }
 
-func CreatePreviewGenerator(tokenProvider interfaces.TokenProvider, storage interfaces.Storage) *PreviewGenerator {
+func CreatePreviewGenerator(
+    serverHost string,
+    wopiDiscovery interfaces.WopiDiscovery,
+    tokenProvider interfaces.TokenProvider,
+    storage interfaces.Storage,
+) *PreviewGenerator {
     return &PreviewGenerator{
+        serverHost: serverHost,
+        wopiDiscovery: wopiDiscovery,
         tokenProvider: tokenProvider,
         storage: storage,
     }
@@ -49,7 +61,7 @@ func (g *PreviewGenerator) GetPreviewLink(fileId string) (*PreviewInfo, error) {
         return nil, err
     }
 
-    return g.buildPreviewInfo(g.generateToken(), fileId), nil
+    return g.buildPreviewInfo(g.generateToken(), fileId)
 }
 
 func (g *PreviewGenerator) getFileInfo(fileId string) (interfaces.FileInfo, error) {
@@ -60,6 +72,20 @@ func (g *PreviewGenerator) generateToken() string {
     return g.tokenProvider.Generate()
 }
 
-func (g *PreviewGenerator) buildPreviewInfo(accessToken, fileId string) *PreviewInfo {
-    return CreatePreviewInfo("/wopi/files"+ fileId, accessToken, int64(0))
+func (g *PreviewGenerator) getActionUrlsrc(ext string) (string, error) {
+    return g.wopiDiscovery.FindPreviewUrl("internal-https", ext)
+}
+
+func (g *PreviewGenerator) buildPreviewInfo(accessToken, fileId string) (*PreviewInfo, error) {
+    ext := strings.TrimPrefix(path.Ext(fileId), ".")
+    urlsrc, err := g.getActionUrlsrc(ext)
+
+    if err != nil {
+        return nil, err
+    }
+
+    WOPIsrc := url.QueryEscape(g.serverHost + "/wopi/files/" + fileId)
+    urlsrc = urlsrc + "?WOPIsrc="+ WOPIsrc
+
+    return CreatePreviewInfo(urlsrc, accessToken, int64(0)), nil
 }

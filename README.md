@@ -1,6 +1,8 @@
 # MS Office Online preview link generator
 
 [![Build Status](https://travis-ci.org/ildarusmanov/msofficepreview.svg?branch=master)](https://travis-ci.org/ildarusmanov/msofficepreview)
+[![Maintainability](https://api.codeclimate.com/v1/badges/406e0ad48e6c05fd6a5e/maintainability)](https://codeclimate.com/github/ildarusmanov/msofficepreview/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/406e0ad48e6c05fd6a5e/test_coverage)](https://codeclimate.com/github/ildarusmanov/msofficepreview/test_coverage)
 
 # Setup
 

@@ -31,7 +31,7 @@ func TestGetPreviewLink(t *testing.T) {
 	wopiDiscovery.On("FindPreviewUrl", "internal-https", "txt").Return("urlsrc", nil)
 
 	provider := mocks.CreateTokenProviderMock()
-	provider.On("Generate").Return(accessToken)
+	provider.On("Generate", fileName).Return(accessToken)
 
 	fileInfo := mocks.CreateFileInfoMock()
 	fileInfo.On("GetFileName").Return(fileName)

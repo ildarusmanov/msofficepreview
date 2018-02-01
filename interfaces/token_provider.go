@@ -1,6 +1,7 @@
 package interfaces
 
 type TokenProvider interface {
-	Generate() string
-	Validate(accessToken string) bool
+	Generate(filePath string) string
+	Validate(token Token) bool
+    FindToken(accessToken string) (Token, bool)
 }

@@ -3,10 +3,13 @@ package controllers
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/ildarusmanov/msofficepreview/test/mocks"
+	"github.com/ildarusmanov/msofficepreview/models"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
+	"encoding/json"
 	"testing"
+	"bytes"
 )
 
 func TestCreatePreviewsController(t *testing.T) {
@@ -36,10 +39,12 @@ func TestCreateMethod(t *testing.T) {
 	controller := CreatePreviewsController(generator)
 	w := httptest.NewRecorder()
 	ctx, _ := gin.CreateTestContext(w)
-
-	ctx.Params = gin.Params{
-		gin.Param{Key: "fileId", Value: fileId},
-	}
+	jsonValue, _ := json.Marshal(models.CreateFile(fileId))
+	ctx.Request, _ = http.NewRequest(
+		"POST",
+		"/api/v1/previews",
+		bytes.NewBuffer(jsonValue),
+	)
 
 	controller.Create(ctx)
 

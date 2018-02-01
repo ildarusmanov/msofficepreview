@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+    "time"
 )
 
 func TestCreateWopiController(t *testing.T) {
@@ -21,13 +22,19 @@ func TestCreateWopiController(t *testing.T) {
 
 func TestCheckFileInfo(t *testing.T) {
 	var (
-		fileId      = "fileId"
-		accessToken = "accessToken"
+		filePath     = "/dir/file/oath/file.txt"
 		fileSize    = int64(100)
 		fileVersion = "111"
 		fileName    = "file.txt"
 		fileOwnerId = "123"
+        tokenValue  = "token-value"
+        tokenTtl    = time.Now().Unix()
 	)
+
+    token := mocks.CreateTokenMock()
+    token.On("GetValue").Return(tokenValue)
+    token.On("GetTtl").Return(tokenTtl)
+    token.On("GetFilePath").Return(filePath)
 
 	fileInfo := mocks.CreateFileInfoMock()
 	fileInfo.On("GetFileName").Return(fileName)
@@ -36,17 +43,18 @@ func TestCheckFileInfo(t *testing.T) {
 	fileInfo.On("GetOwnerId").Return(fileOwnerId)
 
 	storage := mocks.CreateStorageMock()
-	storage.On("GetFileInfo", fileId).Return(fileInfo, nil)
+	storage.On("GetFileInfo", filePath).Return(fileInfo, nil)
 
 	provider := mocks.CreateTokenProviderMock()
-	provider.On("Validate", accessToken).Return(true)
+	provider.On("Validate", token).Return(true)
+    provider.On("Generate", filePath).Return(tokenValue)
+    provider.On("FindToken", tokenValue).Return(token, true)
 
 	controller := CreateWopiController(storage, provider)
 
 	w := httptest.NewRecorder()
 	ctx, _ := gin.CreateTestContext(w)
-	ctx.Request, _ = http.NewRequest("GET", "/?accessToken="+accessToken, nil)
-	ctx.Params = gin.Params{gin.Param{Key: "fileId", Value: fileId}}
+	ctx.Params = gin.Params{gin.Param{Key: "fileId", Value: tokenValue}}
 
 	controller.CheckFileInfo(ctx)
 
@@ -56,23 +64,30 @@ func TestCheckFileInfo(t *testing.T) {
 
 func TestGetFile(t *testing.T) {
 	var (
-		fileId       = "fileId"
-		accessToken  = "accessToken"
+		tokenValue   = "accessToken"
+        tokenTtl     = time.Now().Unix()
+        filePath     = "dir/file/path/file.txt"
+        fileId       = tokenValue
 		fileContents = []byte("contents")
 	)
 
 	storage := mocks.CreateStorageMock()
-	storage.On("GetContents", fileId).Return(fileContents, nil)
+	storage.On("GetContents", filePath).Return(fileContents, nil)
+
+    token := mocks.CreateTokenMock()
+    token.On("GetValue").Return(tokenValue)
+    token.On("GetTtl").Return(tokenTtl)
+    token.On("GetFilePath").Return(filePath)
 
 	provider := mocks.CreateTokenProviderMock()
-	provider.On("Validate", accessToken).Return(true)
+	provider.On("Validate", token).Return(true)
+    provider.On("FindToken", tokenValue).Return(token, true)
 
 	controller := CreateWopiController(storage, provider)
 
 	w := httptest.NewRecorder()
 	ctx, _ := gin.CreateTestContext(w)
 	ctx.Params = gin.Params{gin.Param{Key: "fileId", Value: fileId}}
-	ctx.Request, _ = http.NewRequest("GET", "/?accessToken="+accessToken, nil)
 
 	controller.GetFile(ctx)
 

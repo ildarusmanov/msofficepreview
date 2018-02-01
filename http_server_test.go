@@ -2,33 +2,37 @@ package main
 
 import (
 	"github.com/ildarusmanov/msofficepreview/test/mocks"
+    "github.com/ildarusmanov/msofficepreview/models"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+    "bytes"
+    "encoding/json"
+    "time"
 )
 
 func TestRouterEndpoints(t *testing.T) {
 	var (
-		fileId          = "fileId"
+		filePath        = "dir/file/path/file.xls"
 		fileName        = "file.xls"
 		fileContents    = []byte("content")
 		fileSize        = int64(len(fileContents))
 		fileOwnerId     = "ownerId"
 		fileVersion     = "123"
 		previewSrc      = "previewUrl"
-		previewToken    = "token"
-		previewTokenTtl = int64(10)
-		accessToken     = "accessToken"
+		tokenValue      = "accessToken"
+        tokenTtl        = time.Now().Unix()
+        fileId          = tokenValue
 	)
 
 	previewInfo := mocks.CreatePreviewInfoMock()
 	previewInfo.On("GetSrc").Return(previewSrc)
-	previewInfo.On("GetToken").Return(previewToken)
-	previewInfo.On("GetTokenTtl").Return(previewTokenTtl)
+	previewInfo.On("GetToken").Return(tokenValue)
+	previewInfo.On("GetTokenTtl").Return(tokenTtl)
 
 	generator := mocks.CreatePreviewGeneratorMock()
-	generator.On("GetPreviewLink", fileId).Return(previewInfo, nil)
+	generator.On("GetPreviewLink", filePath).Return(previewInfo, nil)
 
 	fileInfo := mocks.CreateFileInfoMock()
 	fileInfo.On("GetFileName").Return(fileName)
@@ -37,11 +41,17 @@ func TestRouterEndpoints(t *testing.T) {
 	fileInfo.On("GetOwnerId").Return(fileOwnerId)
 
 	storage := mocks.CreateStorageMock()
-	storage.On("GetContents", fileId).Return(fileContents, nil)
-	storage.On("GetFileInfo", fileId).Return(fileInfo, nil)
+	storage.On("GetContents", filePath).Return(fileContents, nil)
+	storage.On("GetFileInfo", filePath).Return(fileInfo, nil)
+
+    token := mocks.CreateTokenMock()
+    token.On("GetValue").Return(tokenValue)
+    token.On("GetTtl").Return(tokenTtl)
+    token.On("GetFilePath").Return(filePath)
 
 	provider := mocks.CreateTokenProviderMock()
-	provider.On("Validate", accessToken).Return(true)
+    provider.On("FindToken", tokenValue).Return(token, true)
+	provider.On("Validate", token).Return(true)
 
 	serviceLocator := mocks.CreateServiceLocatorMock()
 	serviceLocator.On("Get", "TokenProvider").Return(provider, nil)
@@ -51,11 +61,15 @@ func TestRouterEndpoints(t *testing.T) {
 	router := CreateRouter(serviceLocator)
 
 	w1 := httptest.NewRecorder()
-	req1, _ := http.NewRequest("GET", "/wopi/files/"+fileId+"?accessToken="+accessToken, nil)
+	req1, _ := http.NewRequest("GET", "/wopi/files/"+fileId, nil)
 	w2 := httptest.NewRecorder()
-	req2, _ := http.NewRequest("GET", "/wopi/files/"+fileId+"/contents?accessToken="+accessToken, nil)
+	req2, _ := http.NewRequest("GET", "/wopi/files/"+fileId+"/contents", nil)
 	w3 := httptest.NewRecorder()
-	req3, _ := http.NewRequest("POST", "/api/v1/previews/"+fileId, nil)
+
+    file := models.CreateFile(filePath)
+    jsonValue, _ := json.Marshal(file)
+	req3, _ := http.NewRequest("POST", "/api/v1/previews", bytes.NewBuffer(jsonValue))
+
     w4 := httptest.NewRecorder()
     req4, _ := http.NewRequest("GET", "/api/v1/status/check", nil)
 

@@ -54,7 +54,7 @@ func CreatePreviewGenerator(
 	}
 }
 
-func (g *PreviewGenerator) GetPreviewLink(fileId string) (*PreviewInfo, error) {
+func (g *PreviewGenerator) GetPreviewLink(fileId string) (interfaces.PreviewInfo, error) {
 	_, err := g.getFileInfo(fileId)
 
 	if err != nil {

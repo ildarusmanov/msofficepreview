@@ -1,7 +1,7 @@
 package mocks
 
 import (
-    "github.com/ildarusmanov/msofficepreview/interfaces"
+	"github.com/ildarusmanov/msofficepreview/interfaces"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -24,6 +24,6 @@ func (m *TokenProviderMock) Validate(token interfaces.Token) bool {
 }
 
 func (m *TokenProviderMock) FindToken(accessToken string) (interfaces.Token, bool) {
-    args := m.Called(accessToken)
-    return args.Get(0).(interfaces.Token), args.Get(1).(bool)
+	args := m.Called(accessToken)
+	return args.Get(0).(interfaces.Token), args.Get(1).(bool)
 }

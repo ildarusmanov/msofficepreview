@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-    "time"
+	"time"
 )
 
 func TestCreateWopiController(t *testing.T) {
@@ -22,19 +22,19 @@ func TestCreateWopiController(t *testing.T) {
 
 func TestCheckFileInfo(t *testing.T) {
 	var (
-		filePath     = "/dir/file/oath/file.txt"
+		filePath    = "/dir/file/oath/file.txt"
 		fileSize    = int64(100)
 		fileVersion = "111"
 		fileName    = "file.txt"
 		fileOwnerId = "123"
-        tokenValue  = "token-value"
-        tokenTtl    = time.Now().Unix()
+		tokenValue  = "token-value"
+		tokenTtl    = time.Now().Unix()
 	)
 
-    token := mocks.CreateTokenMock()
-    token.On("GetValue").Return(tokenValue)
-    token.On("GetTtl").Return(tokenTtl)
-    token.On("GetFilePath").Return(filePath)
+	token := mocks.CreateTokenMock()
+	token.On("GetValue").Return(tokenValue)
+	token.On("GetTtl").Return(tokenTtl)
+	token.On("GetFilePath").Return(filePath)
 
 	fileInfo := mocks.CreateFileInfoMock()
 	fileInfo.On("GetFileName").Return(fileName)
@@ -47,8 +47,8 @@ func TestCheckFileInfo(t *testing.T) {
 
 	provider := mocks.CreateTokenProviderMock()
 	provider.On("Validate", token).Return(true)
-    provider.On("Generate", filePath).Return(tokenValue)
-    provider.On("FindToken", tokenValue).Return(token, true)
+	provider.On("Generate", filePath).Return(tokenValue)
+	provider.On("FindToken", tokenValue).Return(token, true)
 
 	controller := CreateWopiController(storage, provider)
 
@@ -65,23 +65,23 @@ func TestCheckFileInfo(t *testing.T) {
 func TestGetFile(t *testing.T) {
 	var (
 		tokenValue   = "accessToken"
-        tokenTtl     = time.Now().Unix()
-        filePath     = "dir/file/path/file.txt"
-        fileId       = tokenValue
+		tokenTtl     = time.Now().Unix()
+		filePath     = "dir/file/path/file.txt"
+		fileId       = tokenValue
 		fileContents = []byte("contents")
 	)
 
 	storage := mocks.CreateStorageMock()
 	storage.On("GetContents", filePath).Return(fileContents, nil)
 
-    token := mocks.CreateTokenMock()
-    token.On("GetValue").Return(tokenValue)
-    token.On("GetTtl").Return(tokenTtl)
-    token.On("GetFilePath").Return(filePath)
+	token := mocks.CreateTokenMock()
+	token.On("GetValue").Return(tokenValue)
+	token.On("GetTtl").Return(tokenTtl)
+	token.On("GetFilePath").Return(filePath)
 
 	provider := mocks.CreateTokenProviderMock()
 	provider.On("Validate", token).Return(true)
-    provider.On("FindToken", tokenValue).Return(token, true)
+	provider.On("FindToken", tokenValue).Return(token, true)
 
 	controller := CreateWopiController(storage, provider)
 

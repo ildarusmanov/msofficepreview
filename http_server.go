@@ -16,18 +16,18 @@ func CreateRouter(serviceLocator interfaces.ServiceLocator) *gin.Engine {
 		serviceLocator.Get("PreviewGenerator").(interfaces.PreviewGenerator),
 	)
 
-    statusController := controllers.CreateStatusController()
+	statusController := controllers.CreateStatusController()
 
 	r := gin.Default()
 	wopi := r.Group("/wopi")
 	{
-        wopi.GET("/files/:fileId/contents", wopiController.GetFile)
+		wopi.GET("/files/:fileId/contents", wopiController.GetFile)
 		wopi.GET("/files/:fileId", wopiController.CheckFileInfo)
 	}
 	apiv1 := r.Group("/api/v1")
 	{
 		apiv1.POST("/previews", previewsController.Create)
-        apiv1.GET("/status/check", statusController.Check)
+		apiv1.GET("/status/check", statusController.Check)
 	}
 
 	return r

@@ -1,16 +1,16 @@
 package models
 
 import (
-    "github.com/stretchr/testify/assert"
-    "testing"
+	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestCreateFile(t *testing.T) {
-    filePath := "filePath"
+	filePath := "filePath"
 
-    file := CreateFile(filePath)
+	file := CreateFile(filePath)
 
-    assert := assert.New(t)
-    assert.NotNil(file)
-    assert.Equal(file.FilePath, filePath)
+	assert := assert.New(t)
+	assert.NotNil(file)
+	assert.Equal(file.FilePath, filePath)
 }

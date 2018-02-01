@@ -19,13 +19,13 @@ func CreateWopiController(storage interfaces.Storage, tokenProvider interfaces.T
 }
 
 func (c *WopiController) CheckFileInfo(ctx *gin.Context) {
-    fileId := ctx.Param("fileId")
-    token, ok := c.tokenProvider.FindToken(fileId)
+	fileId := ctx.Param("fileId")
+	token, ok := c.tokenProvider.FindToken(fileId)
 
-    if !ok || !c.tokenProvider.Validate(token) {
-        ctx.AbortWithStatus(http.StatusUnauthorized)
-        return
-    }
+	if !ok || !c.tokenProvider.Validate(token) {
+		ctx.AbortWithStatus(http.StatusUnauthorized)
+		return
+	}
 
 	fileInfo, err := c.storage.GetFileInfo(token.GetFilePath())
 
@@ -44,13 +44,13 @@ func (c *WopiController) CheckFileInfo(ctx *gin.Context) {
 }
 
 func (c *WopiController) GetFile(ctx *gin.Context) {
-    fileId := ctx.Param("fileId")
-    token, ok := c.tokenProvider.FindToken(fileId)
+	fileId := ctx.Param("fileId")
+	token, ok := c.tokenProvider.FindToken(fileId)
 
-    if !ok || !c.tokenProvider.Validate(token) {
-        ctx.AbortWithStatus(http.StatusUnauthorized)
-        return
-    }
+	if !ok || !c.tokenProvider.Validate(token) {
+		ctx.AbortWithStatus(http.StatusUnauthorized)
+		return
+	}
 
 	content, err := c.storage.GetContents(token.GetFilePath())
 

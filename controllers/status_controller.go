@@ -1,16 +1,16 @@
 package controllers
 
 import (
-    "net/http"
-    "github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
-type StatusController struct {}
+type StatusController struct{}
 
 func CreateStatusController() *StatusController {
-    return &StatusController{}
+	return &StatusController{}
 }
 
 func (c *StatusController) Check(ctx *gin.Context) {
-    ctx.JSON(http.StatusOK, gin.H{"status": "ok"})
+	ctx.JSON(http.StatusOK, gin.H{"status": "ok"})
 }

@@ -1,15 +1,15 @@
 package controllers
 
 import (
+	"bytes"
+	"encoding/json"
 	"github.com/gin-gonic/gin"
-	"github.com/ildarusmanov/msofficepreview/test/mocks"
 	"github.com/ildarusmanov/msofficepreview/models"
+	"github.com/ildarusmanov/msofficepreview/test/mocks"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
-	"encoding/json"
 	"testing"
-	"bytes"
 )
 
 func TestCreatePreviewsController(t *testing.T) {

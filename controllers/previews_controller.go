@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"github.com/gin-gonic/gin"
-    "github.com/ildarusmanov/msofficepreview/models"
 	"github.com/ildarusmanov/msofficepreview/interfaces"
+	"github.com/ildarusmanov/msofficepreview/models"
 	"net/http"
 )
 
@@ -16,12 +16,12 @@ func CreatePreviewsController(generator interfaces.PreviewGenerator) *PreviewsCo
 }
 
 func (c *PreviewsController) Create(ctx *gin.Context) {
-    var json models.File
+	var json models.File
 
-    if err := ctx.ShouldBindJSON(&json); err != nil {
-        ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err})
-        return;
-    }
+	if err := ctx.ShouldBindJSON(&json); err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err})
+		return
+	}
 
 	previewInfo, err := c.generator.GetPreviewLink(json.FilePath)
 

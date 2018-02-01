@@ -1,17 +1,17 @@
 package services
 
 import (
-    "github.com/ildarusmanov/msofficepreview/interfaces"
 	"github.com/google/uuid"
+	"github.com/ildarusmanov/msofficepreview/interfaces"
 	"sync"
 	"time"
 )
 
 type Token struct {
-    Ttl       int64
+	Ttl       int64
 	Timestamp int64
 	Value     string
-    FilePath  string
+	FilePath  string
 }
 
 func CreateToken(filePath string, ttl int64) *Token {
@@ -19,23 +19,23 @@ func CreateToken(filePath string, ttl int64) *Token {
 	timestamp := time.Now().Unix()
 
 	return &Token{
-        Ttl:       ttl,
+		Ttl:       ttl,
 		Timestamp: timestamp,
 		Value:     tokenValue,
-        FilePath:  filePath,
+		FilePath:  filePath,
 	}
 }
 
 func (t *Token) GetValue() string {
-    return t.Value
+	return t.Value
 }
 
 func (t *Token) GetFilePath() string {
-    return t.FilePath
+	return t.FilePath
 }
 
 func (t *Token) GetTtl() int64 {
-    return t.Ttl
+	return t.Ttl
 }
 
 type MemoryTokenProvider struct {
@@ -71,11 +71,11 @@ func (p *MemoryTokenProvider) Validate(token interfaces.Token) bool {
 }
 
 func (p *MemoryTokenProvider) FindToken(tokenValue string) (interfaces.Token, bool) {
-    p.Lock()
-    token, ok := p.tokens[tokenValue]
-    p.Unlock()
+	p.Lock()
+	token, ok := p.tokens[tokenValue]
+	p.Unlock()
 
-    return token, ok
+	return token, ok
 }
 
 func (p *MemoryTokenProvider) cleanUp() {
@@ -99,7 +99,7 @@ func (p *MemoryTokenProvider) tokenExists(tokenValue string) bool {
 }
 
 func (p *MemoryTokenProvider) getTokenTtl() int64 {
-    return time.Now().Unix() + p.tokenLifetime
+	return time.Now().Unix() + p.tokenLifetime
 }
 
 func (p *MemoryTokenProvider) createNewToken(filePath string) interfaces.Token {

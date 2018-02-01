@@ -56,13 +56,17 @@ func TestRouterEndpoints(t *testing.T) {
 	req2, _ := http.NewRequest("GET", "/wopi/files/"+fileId+"/contents?accessToken="+accessToken, nil)
 	w3 := httptest.NewRecorder()
 	req3, _ := http.NewRequest("POST", "/api/v1/previews/"+fileId, nil)
+    w4 := httptest.NewRecorder()
+    req4, _ := http.NewRequest("GET", "/api/v1/status/check", nil)
 
 	router.ServeHTTP(w1, req1)
 	router.ServeHTTP(w2, req2)
 	router.ServeHTTP(w3, req3)
+    router.ServeHTTP(w4, req4)
 
 	assert := assert.New(t)
 	assert.Equal(http.StatusOK, w1.Code)
 	assert.Equal(http.StatusOK, w2.Code)
 	assert.Equal(http.StatusOK, w3.Code)
+    assert.Equal(http.StatusOK, w4.Code)
 }

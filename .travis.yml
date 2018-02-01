@@ -1,4 +1,23 @@
 language: go
 go:
   - 1.9.x
+env:
+  - CC_TEST_REPORTER_ID=585274278e27cbcbb29cdb0b92c28c764ebfe399638c533b44e77f9878e7ed5a
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - go get golang.org/x/tools/cmd/cover
+  - go get github.com/modocache/gover
+  - ./cc-test-reporter before-build
+intstall:
+  - go get -u github.com/golang/dep/cmd/dep
+  - dep ensure
+script:
+  - go test -cover -coverpkg github.com/ildarusmanov/msofficepreview -coverprofile msofficepreview.coverprofile      .
+  - go test -cover -coverpkg github.com/ildarusmanov/msofficepreview/services -coverprofile services.coverprofile ./services
+  - go test -cover -coverpkg github.com/ildarusmanov/msofficepreview/controllers -coverprofile controllers.coverprofile ./controllers
+  - go test -cover -coverpkg github.com/ildarusmanov/msofficepreview/models -coverprofile models.coverprofile ./models
+after_script:
+  - gover ./ c.out
+  - ./cc-test-reporter after-build -t gocov --exit-code $TRAVIS_TEST_RESULT
 

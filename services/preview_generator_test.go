@@ -59,5 +59,5 @@ func TestGetPreviewLink(t *testing.T) {
 	assert.Nil(err)
 	assert.NotNil(previewInfo.GetSrc())
 	assert.Equal(previewInfo.GetToken(), accessToken)
-	assert.Equal(previewInfo.GetTokenTtl(), tokenTtl)
+	assert.Equal(previewInfo.GetTokenTtl(), tokenTtl*1000)
 }

@@ -17,7 +17,7 @@ func CreatePreviewInfo(src, token string, tokenTtl int64) *PreviewInfo {
 	return &PreviewInfo{
 		src:      src,
 		token:    token,
-		tokenTtl: tokenTtl,
+		tokenTtl: tokenTtl * 1000, // convert seconds to milliseconds
 	}
 }
 

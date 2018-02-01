@@ -1,5 +1,5 @@
 server_host: http://localhost
-server_addr: :8080
+server_addr: :8001
 discovery_xml_url: "discovery.xml"
 storage_root: "/"
 token_lifetime: 3600

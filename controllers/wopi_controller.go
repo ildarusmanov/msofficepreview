@@ -11,6 +11,8 @@ type WopiController struct {
 	tokenProvider interfaces.TokenProvider
 }
 
+type ActionHandlerFunc func(*gin.Context, interfaces.Token)
+
 func CreateWopiController(storage interfaces.Storage, tokenProvider interfaces.TokenProvider) *WopiController {
 	return &WopiController{
 		storage:       storage,
@@ -18,15 +20,21 @@ func CreateWopiController(storage interfaces.Storage, tokenProvider interfaces.T
 	}
 }
 
-func (c *WopiController) CheckFileInfo(ctx *gin.Context) {
-	fileId := ctx.Param("fileId")
-	token, ok := c.tokenProvider.FindToken(fileId)
+func (c *WopiController) CreateAction(action ActionHandlerFunc) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		fileId := ctx.Param("fileId")
+		token, ok := c.tokenProvider.FindToken(fileId)
 
-	if !ok || !c.tokenProvider.Validate(token) {
-		ctx.AbortWithStatus(http.StatusUnauthorized)
-		return
+		if !ok || !c.tokenProvider.Validate(token) {
+			ctx.AbortWithStatus(http.StatusUnauthorized)
+			return
+		}
+
+		action(ctx, token)
 	}
+}
 
+func (c *WopiController) CheckFileInfo(ctx *gin.Context, token interfaces.Token) {
 	fileInfo, err := c.storage.GetFileInfo(token.GetFilePath())
 
 	if err != nil {
@@ -43,15 +51,7 @@ func (c *WopiController) CheckFileInfo(ctx *gin.Context) {
 	})
 }
 
-func (c *WopiController) GetFile(ctx *gin.Context) {
-	fileId := ctx.Param("fileId")
-	token, ok := c.tokenProvider.FindToken(fileId)
-
-	if !ok || !c.tokenProvider.Validate(token) {
-		ctx.AbortWithStatus(http.StatusUnauthorized)
-		return
-	}
-
+func (c *WopiController) GetFile(ctx *gin.Context, token interfaces.Token) {
 	content, err := c.storage.GetContents(token.GetFilePath())
 
 	if err != nil {

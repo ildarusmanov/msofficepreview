@@ -56,7 +56,7 @@ func TestCheckFileInfo(t *testing.T) {
 	ctx, _ := gin.CreateTestContext(w)
 	ctx.Params = gin.Params{gin.Param{Key: "fileId", Value: tokenValue}}
 
-	controller.CheckFileInfo(ctx)
+	controller.CreateAction(controller.CheckFileInfo)(ctx)
 
 	assert := assert.New(t)
 	assert.Equal(w.Result().StatusCode, http.StatusOK)
@@ -89,7 +89,7 @@ func TestGetFile(t *testing.T) {
 	ctx, _ := gin.CreateTestContext(w)
 	ctx.Params = gin.Params{gin.Param{Key: "fileId", Value: fileId}}
 
-	controller.GetFile(ctx)
+	controller.CreateAction(controller.GetFile)(ctx)
 
 	resp := w.Result()
 	body, _ := ioutil.ReadAll(resp.Body)

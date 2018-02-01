@@ -21,12 +21,12 @@ func CreateRouter(serviceLocator interfaces.ServiceLocator) *gin.Engine {
 	r := gin.Default()
 	wopi := r.Group("/wopi")
 	{
+        wopi.GET("/files/:fileId/contents", wopiController.GetFile)
 		wopi.GET("/files/:fileId", wopiController.CheckFileInfo)
-		wopi.GET("/files/:fileId/contents", wopiController.GetFile)
 	}
 	apiv1 := r.Group("/api/v1")
 	{
-		apiv1.POST("/previews/:fileId", previewsController.Create)
+		apiv1.POST("/previews", previewsController.Create)
         apiv1.GET("/status/check", statusController.Check)
 	}
 

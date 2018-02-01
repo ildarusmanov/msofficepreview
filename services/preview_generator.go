@@ -54,38 +54,38 @@ func CreatePreviewGenerator(
 	}
 }
 
-func (g *PreviewGenerator) GetPreviewLink(fileId string) (interfaces.PreviewInfo, error) {
-	_, err := g.getFileInfo(fileId)
+func (g *PreviewGenerator) GetPreviewLink(filePath string) (interfaces.PreviewInfo, error) {
+	_, err := g.getFileInfo(filePath)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return g.buildPreviewInfo(g.generateToken(), fileId)
+	return g.buildPreviewInfo(g.generateToken(filePath), filePath)
 }
 
-func (g *PreviewGenerator) getFileInfo(fileId string) (interfaces.FileInfo, error) {
-	return g.storage.GetFileInfo(fileId)
+func (g *PreviewGenerator) getFileInfo(filePath string) (interfaces.FileInfo, error) {
+	return g.storage.GetFileInfo(filePath)
 }
 
-func (g *PreviewGenerator) generateToken() string {
-	return g.tokenProvider.Generate()
+func (g *PreviewGenerator) generateToken(filePath string) string {
+	return g.tokenProvider.Generate(filePath)
 }
 
 func (g *PreviewGenerator) getActionUrlsrc(ext string) (string, error) {
 	return g.wopiDiscovery.FindPreviewUrl("internal-https", ext)
 }
 
-func (g *PreviewGenerator) buildPreviewInfo(accessToken, fileId string) (*PreviewInfo, error) {
-	ext := strings.TrimPrefix(path.Ext(fileId), ".")
+func (g *PreviewGenerator) buildPreviewInfo(accessToken, filePath string) (*PreviewInfo, error) {
+	ext := strings.TrimPrefix(path.Ext(filePath), ".")
 	urlsrc, err := g.getActionUrlsrc(ext)
 
 	if err != nil {
 		return nil, err
 	}
 
-	WOPIsrc := url.QueryEscape(g.serverHost + "/wopi/files/" + fileId)
-	urlsrc = urlsrc + "?WOPIsrc=" + WOPIsrc
+	WOPIsrc := url.QueryEscape(g.serverHost + "/wopi/files/" + accessToken)
+	urlsrc = urlsrc + "&WOPIsrc=" + WOPIsrc
 
 	return CreatePreviewInfo(urlsrc, accessToken, int64(0)), nil
 }

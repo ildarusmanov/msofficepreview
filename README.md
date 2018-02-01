@@ -22,8 +22,17 @@ go test ./...
 ```
 
 ## Try some requests like this
+
+Get preview link
 ```
 POST http://0.0.0.0:8080/api/v1/previews
 
 {"file_path": "/path/to/file/in/your/storage/example.xls"}
 ```
+
+Status check
+```
+GET http://0.0.0.0:8080/api/v1/status/check
+```
+
+

@@ -4,6 +4,7 @@ import (
 	"github.com/ildarusmanov/msofficepreview/test/mocks"
 	"github.com/stretchr/testify/assert"
 	"testing"
+	"time"
 )
 
 var serverHost = "http://test.com"
@@ -21,17 +22,25 @@ func TestCreatePreviewGenerator(t *testing.T) {
 func TestGetPreviewLink(t *testing.T) {
 	var (
 		accessToken = "access token"
+		filePath    = "dir/path/file.txt"
 		fileName    = "file.txt"
 		fileSize    = int64(3)
 		fileOwnerId = "owner id"
 		fileVersion = "ver1"
+		tokenTtl    = time.Now().Unix()
 	)
 
 	wopiDiscovery := mocks.CreateWopiDiscoveryMock()
 	wopiDiscovery.On("FindPreviewUrl", "internal-https", "txt").Return("urlsrc", nil)
 
+	token := mocks.CreateTokenMock()
+	token.On("GetValue").Return(accessToken)
+	token.On("GetTtl").Return(tokenTtl)
+	token.On("GetFilePath").Return(filePath)
+
 	provider := mocks.CreateTokenProviderMock()
 	provider.On("Generate", fileName).Return(accessToken)
+	provider.On("FindToken", accessToken).Return(token, true)
 
 	fileInfo := mocks.CreateFileInfoMock()
 	fileInfo.On("GetFileName").Return(fileName)
@@ -50,5 +59,5 @@ func TestGetPreviewLink(t *testing.T) {
 	assert.Nil(err)
 	assert.NotNil(previewInfo.GetSrc())
 	assert.Equal(previewInfo.GetToken(), accessToken)
-	assert.NotNil(previewInfo.GetTokenTtl())
+	assert.Equal(previewInfo.GetTokenTtl(), tokenTtl)
 }

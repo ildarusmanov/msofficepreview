@@ -5,6 +5,7 @@ import (
 	"os"
 	"path"
 	"runtime"
+	"strconv"
 	"testing"
 )
 
@@ -46,7 +47,7 @@ func TestGetFileInfo(t *testing.T) {
 	assert.Nil(err1)
 	assert.Equal(fileInfo1.GetFileName(), testFileBaseName)
 	assert.Equal(fileInfo1.GetSize(), fstat.Size())
-	assert.Equal(fileInfo1.GetVersion(), string(fstat.ModTime().Unix()))
+	assert.Equal(fileInfo1.GetVersion(), strconv.FormatInt(fstat.ModTime().Unix(), 10))
 	assert.NotNil(err2)
 	assert.Nil(fileInfo2)
 }

@@ -21,24 +21,7 @@ func main() {
 
 	flag.Parse()
 
-	config, err := LoadConfigYAML(*configfile)
-
-	if err != nil {
-		log.Fatalf("[*] Can not load config file %s\n", configfile)
-	}
-
-	serviceLocator, err := BuildServiceLocator(config)
-
-	if err != nil {
-		log.Fatal("[*] Can not load services")
-	}
-
-	router := CreateRouter(serviceLocator)
-
-	srv := &http.Server{
-		Addr:    config.ServerAddr,
-		Handler: router,
-	}
+	srv := CreateServer(*configfile)
 
 	go func() {
 		log.Printf("[x] Stop server due to %s\n", srv.ListenAndServe())
@@ -59,4 +42,27 @@ func main() {
 	}
 
 	log.Println("[*] Server exiting")
+}
+
+func CreateServer(configfilePath string) *http.Server {
+	config, err := LoadConfigYAML(configfilePath)
+
+	if err != nil {
+		log.Fatalf("[*] Can not load config file %s\n", configfile)
+	}
+
+	serviceLocator, err := BuildServiceLocator(config)
+
+	if err != nil {
+		log.Fatal("[*] Can not load services")
+	}
+
+	router := CreateRouter(serviceLocator)
+
+	srv := &http.Server{
+		Addr:    config.ServerAddr,
+		Handler: router,
+	}
+
+	return srv
 }

@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"strconv"
 )
 
 type diskFileInfo struct {
@@ -66,7 +67,7 @@ func (s *DiskStorage) GetFileInfo(fileId string) (interfaces.FileInfo, error) {
 	return &diskFileInfo{
 		name:    path.Base(filePath),
 		size:    fileInfo.Size(),
-		version: string(fileInfo.ModTime().Unix()),
+		version: strconv.FormatInt(fileInfo.ModTime().Unix(), 10),
 		ownerId: "root",
 	}, nil
 }

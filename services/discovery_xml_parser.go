@@ -64,20 +64,34 @@ func (d *WopiDiscovery) GetXML() []byte {
 	return xmlData
 }
 
-func (d *WopiDiscovery) FindPreviewUrl(zone, ext string) (string, error) {
+func (d *WopiDiscovery) getNetZone(zoneName string) (*NetZone, error) {
 	for _, netzone := range d.NetZones {
-		if netzone.Name != zone {
-			continue
+		if netzone.Name != zoneName {
+			return &netzone, nil
 		}
+	}
 
-		for _, app := range netzone.Apps {
-			if urlsrc, err := app.getActionUrlsrc("view", ext); err == nil {
-				return urlsrc, nil
-			}
+	return nil, errors.New("Netzone not found")
+}
+
+func (d *WopiDiscovery) getActionUrlsrc(zoneName, actionName, ext string) (string, error) {
+	netzone, err := d.getNetZone(zoneName)
+
+	if err != nil {
+		return "", err
+	}
+
+	for _, app := range netzone.Apps {
+		if urlsrc, err := app.getActionUrlsrc(actionName, ext); err == nil {
+			return urlsrc, nil
 		}
 	}
 
 	return "", errors.New("action not found")
+}
+
+func (d *WopiDiscovery) FindPreviewUrl(zoneName, ext string) (string, error) {
+	return d.getActionUrlsrc(zoneName, "view", ext)
 }
 
 func LoadDiscoveryXml(url string) ([]byte, error) {

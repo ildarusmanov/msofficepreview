@@ -44,12 +44,20 @@ cd [project path]
 sudo docker build -t msofficepreview .
 
 // prod
-sudo docker run --restart=always -d -p 10.90.137.73:8001:8001 --network host --mount type=bind,source=/storage/dir/path,target=/storage,readonly msofficepreview
+sudo docker run --restart=always -d -p 8001:8001 --network host --mount type=bind,source=/storage/dir/path,target=/storage,readonly msofficepreview
 
 // or dev
 sudo docker run -d -p 8001:8001 --network host --mount type=bind,source=/home/storage,target=/storage,readonly msofficepreview 
 // list containers
 sudo docker ps
 ```
+
+# TODO
+
+* Add Redis support as a storage provider
+* Add Benchmark tests
+* Improve tests coverage
+* Improve speed
+* Add support of more WOPI methods
 
 

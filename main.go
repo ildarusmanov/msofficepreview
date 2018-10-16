@@ -48,7 +48,7 @@ func CreateServer(configfilePath string) *http.Server {
 	config, err := LoadConfigYAML(configfilePath)
 
 	if err != nil {
-		log.Fatalf("[*] Can not load config file %s\n", configfile)
+		log.Fatalf("[*] Can not load config file %s\n", configfilePath)
 	}
 
 	serviceLocator, err := BuildServiceLocator(config)

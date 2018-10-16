@@ -14,6 +14,10 @@ type Token struct {
 	FilePath  string
 }
 
+const (
+	expireInterval = 100
+)
+
 func CreateToken(filePath string, ttl int64) *Token {
 	tokenValue := uuid.New().URN()
 	timestamp := time.Now().Unix()
@@ -39,20 +43,19 @@ func (t *Token) GetTtl() int64 {
 }
 
 type MemoryTokenProvider struct {
-	sync.Mutex
 	tokenLifetime int64
-	tokens        map[string]*Token
+	tokens        *sync.Map
 }
 
 func CreateMemoryTokenProvider(tokenLifetime int64) *MemoryTokenProvider {
 	p := &MemoryTokenProvider{
 		tokenLifetime: tokenLifetime,
-		tokens:        make(map[string]*Token),
+		tokens:        &sync.Map{},
 	}
 
 	go func() {
 		for {
-			time.Sleep(time.Duration(100) * time.Millisecond)
+			time.Sleep(time.Duration(expireInterval) * time.Millisecond)
 			p.cleanUp()
 		}
 	}()
@@ -71,19 +74,21 @@ func (p *MemoryTokenProvider) Validate(token interfaces.Token) bool {
 }
 
 func (p *MemoryTokenProvider) FindToken(tokenValue string) (interfaces.Token, bool) {
-	p.Lock()
-	token, ok := p.tokens[tokenValue]
-	p.Unlock()
+	if token, ok := p.tokens.Load(tokenValue); ok {
+		return token.(*Token), true
+	}
 
-	return token, ok
+	return nil, false
 }
 
 func (p *MemoryTokenProvider) cleanUp() {
-	for tokenValue, token := range p.tokens {
-		if p.isExpired(token) {
-			delete(p.tokens, tokenValue)
+	p.tokens.Range(func(tokenValue, token interface{}) bool {
+		if p.isExpired(token.(*Token)) {
+			p.tokens.Delete(tokenValue)
 		}
-	}
+
+		return true
+	})
 }
 
 func (p *MemoryTokenProvider) isExpired(token interfaces.Token) bool {
@@ -91,9 +96,7 @@ func (p *MemoryTokenProvider) isExpired(token interfaces.Token) bool {
 }
 
 func (p *MemoryTokenProvider) tokenExists(tokenValue string) bool {
-	p.Lock()
-	_, ok := p.tokens[tokenValue]
-	p.Unlock()
+	_, ok := p.tokens.Load(tokenValue)
 
 	return ok
 }
@@ -105,9 +108,7 @@ func (p *MemoryTokenProvider) getTokenTtl() int64 {
 func (p *MemoryTokenProvider) createNewToken(filePath string) interfaces.Token {
 	newToken := CreateToken(filePath, p.getTokenTtl())
 
-	p.Lock()
-	p.tokens[newToken.Value] = newToken
-	p.Unlock()
+	p.tokens.Store(newToken.Value, newToken)
 
 	return newToken
 }

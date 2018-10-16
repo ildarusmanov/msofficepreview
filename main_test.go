@@ -1,11 +1,11 @@
 package main
 
 import (
-    "os"
-    "testing"
+	"os"
+	"testing"
 )
 
 func TestMain(m *testing.M) {
-    code := m.Run()
-    os.Exit(code)
+	code := m.Run()
+	os.Exit(code)
 }

@@ -45,12 +45,14 @@ func TestFindAndValidate(t *testing.T) {
 
 func TestCleanUp(t *testing.T) {
 	var (
-		minTokenLifetime = int64(3)
+		minTokenLifetime = int64(2)
 	)
 
 	provider := CreateMemoryTokenProvider(minTokenLifetime)
 	expiredTokenValue := provider.Generate(filePath)
+
 	time.Sleep(time.Duration(minTokenLifetime+1) * time.Second)
+
 	newTokenValue := provider.Generate(filePath)
 
 	assert := assert.New(t)
